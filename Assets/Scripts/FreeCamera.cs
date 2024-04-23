@@ -1,20 +1,40 @@
 using UnityEngine;
-using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 
+
 public class FreeCamera : MonoBehaviour
 {
-
 	public float speed = 1.5f;
 	public float acceleration = 10f;
-	public float sensitivity = 5f; // чувствительность мыши
+	public float sensitivity = 5f;
 	public Camera mainCamera;
-	//public BoxCollider boxCollider;
+	public string hillTag;
+	public GameObject stone;
+	//public BoxCollider boxCollider;i
 
+	private const float deviationRate = 0.2f, heightRate = 1.5f;
 	private Rigidbody body;
 	private float rotY;
 	private Vector3 direction;
+	private List<FallPosition> fallPositions;
+	struct FallPosition
+	{
+		public Vector3 coords;
+		public float height;
+		public float devX;
+		public float devZ;
+
+		public FallPosition(Vector3 coords, float height, float devX, float devZ)
+		{
+			this.coords = coords;
+			this.height = height;
+			this.devX = devX;
+			this.devZ = devZ;
+		}
+	}
 
 	void Start()
 	{
@@ -24,7 +44,19 @@ public class FreeCamera : MonoBehaviour
 		body.mass = 0.1f;
 		body.drag = 10;
 
-		//SetBoxColliderSize();
+		fallPositions = new List<FallPosition>();
+		foreach (GameObject hill in GameObject.FindGameObjectsWithTag(hillTag))
+		{
+			MeshRenderer renderer = hill.GetComponent<MeshRenderer>();
+			FallPosition newPos = new FallPosition(
+				hill.transform.position,
+				renderer.bounds.size[1] * heightRate,
+				renderer.bounds.size[0] * deviationRate,
+				renderer.bounds.size[2] * deviationRate
+			);
+
+			fallPositions.Add(newPos);
+		}
 	}
 
 	/*public void SetBoxColliderSize()
@@ -49,6 +81,7 @@ public class FreeCamera : MonoBehaviour
 	void Update()
 	{
 		Move();
+		DropStone();
 	}
 
 	void Move()
@@ -67,6 +100,33 @@ public class FreeCamera : MonoBehaviour
 
 		direction = new Vector3(h, 0, v);
 		direction = mainCamera.transform.TransformDirection(direction);
+	}
+
+	void DropStone()
+	{
+		if (Input.GetKeyDown(KeyCode.X))
+		{
+			int idx = 0;
+			float minDist = Vector3.Distance(fallPositions[0].coords, transform.position);
+			for (int i = 1; i < fallPositions.Count; ++i)
+			{
+				float curDist = Vector3.Distance(
+					fallPositions[i].coords,
+					transform.position
+				);
+				if (curDist < minDist)
+				{
+					minDist = curDist;
+					idx = i;
+				}
+			}
+
+			Vector3 finalPos = fallPositions[idx].coords;
+			finalPos[1] += fallPositions[idx].height;
+			finalPos[0] += Random.Range(-fallPositions[idx].devX, fallPositions[idx].devX);
+			finalPos[2] += Random.Range(-fallPositions[idx].devZ, fallPositions[idx].devZ);
+			Instantiate(stone, finalPos, Quaternion.identity);
+		}
 	}
 
 	void FixedUpdate()

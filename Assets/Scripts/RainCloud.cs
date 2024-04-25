@@ -41,6 +41,8 @@ public class RainCloud : MonoBehaviour
         if (!move && Input.GetKeyDown(KeyCode.Z))
         {
             lightning.Trigger();
+            lightning.GetComponent<AudioSource>().Play();
+            rain.GetComponent<AudioSource>().Stop();
             rain.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             move = true;
         }
@@ -57,6 +59,7 @@ public class RainCloud : MonoBehaviour
             if (Vector3.Distance(transform.position, targetPositions[targetIdx]) < 0.001f)
             {
                 move = false;
+                rain.GetComponent<AudioSource>().Play();
                 rain.Play();
                 targetIdx = (targetIdx + 1) % targetPositions.Count;
             }

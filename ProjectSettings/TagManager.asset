@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - HillForStone
+  - VillagerTool
   - Worker
   layers:
   - Default

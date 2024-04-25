@@ -13,6 +13,8 @@ public class FreeCamera : MonoBehaviour
 	public Camera mainCamera;
 	public string hillTag;
 	public GameObject stone;
+	public string toolTag;
+	public List<Mesh> tools;
 
 	private const float deviationRate = 0.2f, heightRate = 1.5f;
 	private Rigidbody body;
@@ -62,8 +64,9 @@ public class FreeCamera : MonoBehaviour
 	{
 		Move();
 		DropStone();
+		ToolBungle();
 	}
-
+ 
 	void Move()
 	{
 		float h = Input.GetAxis("Horizontal");
@@ -109,6 +112,18 @@ public class FreeCamera : MonoBehaviour
 			finalPos[0] += Random.Range(-fallPositions[idx].devX, fallPositions[idx].devX);
 			finalPos[2] += Random.Range(-fallPositions[idx].devZ, fallPositions[idx].devZ);
 			Instantiate(stone, finalPos, Quaternion.identity);
+		}
+	}
+
+	void ToolBungle()
+	{
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			foreach (GameObject tool in GameObject.FindGameObjectsWithTag(toolTag))
+			{
+				MeshFilter mf = tool.GetComponent<MeshFilter>();
+				mf.sharedMesh = tools[Random.Range(0, tools.Count)];
+			}
 		}
 	}
 

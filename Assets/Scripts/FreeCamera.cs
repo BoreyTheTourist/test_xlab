@@ -87,12 +87,15 @@ public class FreeCamera : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.X))
 		{
 			int idx = 0;
-			float minDist = Vector3.Distance(fallPositions[0].coords, transform.position);
+			float minDist = Vector3.Distance(
+				fallPositions[0].coords,
+				mainCamera.transform.position
+			);
 			for (int i = 1; i < fallPositions.Count; ++i)
 			{
 				float curDist = Vector3.Distance(
 					fallPositions[i].coords,
-					transform.position
+					mainCamera.transform.position
 				);
 				if (curDist < minDist)
 				{

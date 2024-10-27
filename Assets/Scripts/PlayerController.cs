@@ -6,11 +6,16 @@ public class PlayerController : MonoBehaviour
 {
     public FreeCamera freeCamera;
     public GameObject ui;
+    public ObjectSpawner stoneSpawner;
 
     private void Update()
     {
-        if (!ui.activeSelf) {
-            freeCamera?.Move();
+        if (ui.activeSelf) return;
+
+        freeCamera?.Move();
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            stoneSpawner?.Spawn();
         }
     }
 }

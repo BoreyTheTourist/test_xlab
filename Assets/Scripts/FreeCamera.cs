@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody))]
 
@@ -11,31 +12,14 @@ public class FreeCamera : MonoBehaviour
 	public float acceleration = 10f;
 	public float sensitivity = 5f;
 	public Camera mainCamera;
-	public string hillTag;
-	public GameObject stone;
+
 	public string toolTag;
 	public List<Mesh> tools;
 
-	private const float deviationRate = 0.2f, heightRate = 1.5f;
 	private Rigidbody body;
 	private float rotY;
 	private Vector3 direction;
-	private List<FallPosition> fallPositions;
-	struct FallPosition
-	{
-		public Vector3 coords;
-		public float height;
-		public float devX;
-		public float devZ;
 
-		public FallPosition(Vector3 coords, float height, float devX, float devZ)
-		{
-			this.coords = coords;
-			this.height = height;
-			this.devX = devX;
-			this.devZ = devZ;
-		}
-	}
 
 	void Start()
 	{
@@ -44,20 +28,6 @@ public class FreeCamera : MonoBehaviour
 		body.useGravity = false;
 		body.mass = 0.1f;
 		body.drag = 10;
-
-		fallPositions = new List<FallPosition>();
-		foreach (GameObject hill in GameObject.FindGameObjectsWithTag(hillTag))
-		{
-			MeshRenderer renderer = hill.GetComponent<MeshRenderer>();
-			FallPosition newPos = new FallPosition(
-				hill.transform.position,
-				renderer.bounds.size[1] * heightRate,
-				renderer.bounds.size[0] * deviationRate,
-				renderer.bounds.size[2] * deviationRate
-			);
-
-			fallPositions.Add(newPos);
-		}
 	}
  
 	public void Move()
@@ -78,34 +48,9 @@ public class FreeCamera : MonoBehaviour
 		direction = mainCamera.transform.TransformDirection(direction);
 	}
 
-	void DropStone()
+	public float Distance(Vector3 point)
 	{
-		if (Input.GetKeyDown(KeyCode.X))
-		{
-			int idx = 0;
-			float minDist = Vector3.Distance(
-				fallPositions[0].coords,
-				mainCamera.transform.position
-			);
-			for (int i = 1; i < fallPositions.Count; ++i)
-			{
-				float curDist = Vector3.Distance(
-					fallPositions[i].coords,
-					mainCamera.transform.position
-				);
-				if (curDist < minDist)
-				{
-					minDist = curDist;
-					idx = i;
-				}
-			}
-
-			Vector3 finalPos = fallPositions[idx].coords;
-			finalPos[1] += fallPositions[idx].height;
-			finalPos[0] += Random.Range(-fallPositions[idx].devX, fallPositions[idx].devX);
-			finalPos[2] += Random.Range(-fallPositions[idx].devZ, fallPositions[idx].devZ);
-			Instantiate(stone, finalPos, Quaternion.identity);
-		}
+		return Vector3.Distance(mainCamera.transform.position, point);
 	}
 
 	void ToolBungle()

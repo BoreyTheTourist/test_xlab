@@ -12,10 +12,6 @@ public class FreeCamera : MonoBehaviour
 	public float acceleration = 10f;
 	public float sensitivity = 5f;
 	public Camera mainCamera;
-
-	public string toolTag;
-	public List<Mesh> tools;
-
 	private Rigidbody body;
 	private float rotY;
 	private Vector3 direction;
@@ -51,18 +47,6 @@ public class FreeCamera : MonoBehaviour
 	public float Distance(Vector3 point)
 	{
 		return Vector3.Distance(mainCamera.transform.position, point);
-	}
-
-	void ToolBungle()
-	{
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			foreach (GameObject tool in GameObject.FindGameObjectsWithTag(toolTag))
-			{
-				MeshFilter mf = tool.GetComponent<MeshFilter>();
-				mf.sharedMesh = tools[Random.Range(0, tools.Count)];
-			}
-		}
 	}
 
 	void FixedUpdate()

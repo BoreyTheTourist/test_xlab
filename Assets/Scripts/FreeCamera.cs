@@ -59,15 +59,8 @@ public class FreeCamera : MonoBehaviour
 			fallPositions.Add(newPos);
 		}
 	}
-
-	void Update()
-	{
-		Move();
-		DropStone();
-		ToolBungle();
-	}
  
-	void Move()
+	public void Move()
 	{
 		float h = Input.GetAxis("Horizontal");
 		float v = Input.GetAxis("Vertical");

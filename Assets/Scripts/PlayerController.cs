@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public FreeCamera freeCamera;
     public GameObject ui;
     public ObjectSpawner stoneSpawner;
+    public CloudController cloudController;
 
     private void Update()
     {
@@ -16,6 +17,10 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             stoneSpawner?.Spawn();
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            cloudController?.ChangeTarget();
         }
     }
 }

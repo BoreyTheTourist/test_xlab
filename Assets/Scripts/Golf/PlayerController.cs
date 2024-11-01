@@ -6,20 +6,13 @@ using UnityEngine;
 namespace Golf {
     public class PlayerController : MonoBehaviour
     {
-        public Transform stick;
-        public float maxAngle = 30;
+        public StickController stickController;
 
         private void Update()
         {
-            var angle = stick.localEulerAngles;
-            if (Input.GetMouseButton(0))
-            {
-                angle.z = maxAngle;
-            } else
-            {
-                angle.z = -maxAngle;
+            if (Input.GetMouseButton(0)) {
+                stickController.Swing();
             }
-            stick.localEulerAngles = angle;
         }
     }
 }

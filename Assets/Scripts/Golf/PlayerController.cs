@@ -7,11 +7,13 @@ namespace Golf {
     public class PlayerController : MonoBehaviour
     {
         public StickController stickController;
+        public PlatformController platformController;
 
         private void Update()
         {
             if (Input.GetMouseButton(0)) {
-                stickController.Swing();
+                //stickController.Swing();
+                platformController.Break();
             }
         }
     }

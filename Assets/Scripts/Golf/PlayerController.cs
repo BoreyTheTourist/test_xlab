@@ -8,12 +8,13 @@ namespace Golf {
     {
         public StickController stickController;
         public PlatformController platformController;
+        public Animator dragonAnimator;
+        private Touch m_touch;
 
         private void Update()
         {
-            if (Input.GetMouseButton(0)) {
-                //stickController.Swing();
-                platformController.Break();
+            if (Input.touchCount > 0) {
+                print("touch");
             }
         }
     }

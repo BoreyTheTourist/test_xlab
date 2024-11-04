@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -5785790878061287174}
   m_Layer: 0
   m_Name: golf_stone_5
-  m_TagString: Untagged
+  m_TagString: GolfStone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,7 +93,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3720925546931925352}
   serializedVersion: 4
-  m_Mass: 100
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

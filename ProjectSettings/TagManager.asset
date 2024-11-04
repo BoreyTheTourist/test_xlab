@@ -4,9 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - HillForStone
-  - VillagerTool
-  - Worker
+  - GolfStone
   layers:
   - Default
   - TransparentFX

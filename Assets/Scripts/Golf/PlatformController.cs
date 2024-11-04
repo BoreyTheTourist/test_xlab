@@ -1,29 +1,39 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Golf {
     public class PlatformController : MonoBehaviour
     {
-        [SerializeField] private GameObject m_solid;
         [SerializeField] private GameObject m_broken;
         [SerializeField] private GameObject[] m_brokenParts;
         [SerializeField] private float m_explosionPower = 50f;
         [SerializeField] private float m_explosionRadius = 50f;
+        [SerializeField] private string m_dangerTag;
+        public event Action OnDangerHit;
 
         public void Break()
         {
             m_broken.SetActive(true);
-            m_solid.SetActive(false);
+            gameObject.SetActive(false);
             foreach (var p in m_brokenParts) {
-                p.GetComponent<Rigidbody>().AddExplosionForce(m_explosionPower, Vector3.zero, m_explosionRadius);
+                p.GetComponent<Rigidbody>().AddExplosionForce(m_explosionPower, p.transform.position, m_explosionRadius);
             }
         }
 
         private void Start()
         {
-            m_solid.SetActive(true);
+            gameObject.SetActive(true);
             m_broken.SetActive(false);
+        }
+
+        private void OnCollisionEnter(Collision col)
+        {
+            if (col.gameObject.tag == m_dangerTag) {
+                OnDangerHit?.Invoke();
+            }
         }
     }
 }

@@ -1,41 +1,88 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Runtime;
+using TMPro;
+using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 public class StickController : MonoBehaviour
 {
-    [SerializeField] private Transform m_stick;
-    [SerializeField] private float m_maxAngle = 30f;
-    [SerializeField] private float m_speed = 10f;
-    private bool isSwing = false;
-    private const float EPS = 0.001f;
-
-    public void Swing()
-    {
-        isSwing = true;
+    enum State {
+        Swinging, Released, Idle,
     }
+    [SerializeField] private float m_maxAngle = 30f;
+    [SerializeField] private float m_powerFactor = 0.01f;
+    public float m_swingFactor = 10f;
+    private Vector3 m_force = Vector3.zero;
+    private State m_state = State.Idle;
+
+    [SerializeField] private Rigidbody m_rb;
 
     private void Start()
     {
-        var a = m_stick.localEulerAngles;
-        a.x = m_maxAngle;
-        m_stick.localEulerAngles = a;
+        m_rb.maxAngularVelocity = 20f;
     }
 
-    private void Update()
+    public void Swing()
     {
-        var angle = m_stick.localEulerAngles;
-        if (isSwing) {
-            if (Mathf.Abs(angle.x + m_maxAngle) < EPS) {
-                isSwing = false;
-                return;
+        m_rb.angularVelocity = Vector3.zero;
+        m_state = State.Swinging;
+    }
+
+    public void Release()
+    {
+        m_state = State.Released;
+    }
+
+    private void OnEnable()
+    {
+        m_rb.gameObject.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        m_rb.gameObject.SetActive(false);
+    }
+
+    public void Disable()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void Enable()
+    {
+        gameObject.SetActive(true);
+    }
+
+    private void FixedUpdate()
+    {
+        var angle = m_rb.rotation.eulerAngles.z;
+        switch (m_state) {
+            case State.Swinging:
+            if (angle > m_maxAngle && angle < 180) {
+                m_rb.angularVelocity = Vector3.zero;
+            } else {
+                m_rb.AddRelativeTorque(Vector3.forward * m_rb.mass * m_swingFactor);
             }
-            angle.x = Mathf.MoveTowardsAngle(angle.x, -m_maxAngle, m_speed * Time.deltaTime);
-        } else if (Mathf.Abs(angle.x - m_maxAngle) > EPS) {
-            angle.x = Mathf.MoveTowardsAngle(angle.x, m_maxAngle, m_speed * Time.deltaTime);
+            m_force += Vector3.back;
+            break;
+
+            case State.Released:
+            m_state = State.Idle;
+            m_rb.angularVelocity = Vector3.zero;
+            m_rb.AddRelativeTorque(m_force * m_rb.mass * m_powerFactor, ForceMode.Impulse);
+            m_force = Vector3.zero;
+            break;
+
+            case State.Idle:
+            if (angle > 180 && angle < 360 - m_maxAngle) {
+                m_rb.angularVelocity = Vector3.zero;
+            }
+            break;
         }
-        m_stick.localEulerAngles = angle;
-        isSwing = false;
     }
 }

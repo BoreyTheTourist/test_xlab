@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 
 namespace Golf {
     public class PlayerController : MonoBehaviour
@@ -13,6 +14,7 @@ namespace Golf {
         public LevelController levelController;
         public Rigidbody body;
         private PlayerInput m_input;
+        private bool m_isRestart = false;
 
         private void Awake()
         {
@@ -22,8 +24,8 @@ namespace Golf {
                 if (gameObject.activeSelf) {
                     stickController.Release();
                 } else {
+                    m_isRestart = true;
                     gameObject.SetActive(true);
-                    print("Enabled new");
                 }
             };
         }
@@ -35,9 +37,11 @@ namespace Golf {
 
         private void OnEnable()
         {
+            print(m_isRestart);
+            if (m_isRestart) {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
             m_input.Enable();
-            stickController.Enable();
-            levelController.Enable();
             levelController.OnLose += Lose;
         }
 

@@ -14,19 +14,24 @@ namespace Golf {
         [SerializeField] private string m_dangerTag;
         public event Action OnDangerHit;
 
-        public void Break()
+        public void Disable()
         {
-            m_broken.SetActive(true);
             gameObject.SetActive(false);
-            foreach (var p in m_brokenParts) {
-                p.GetComponent<Rigidbody>().AddExplosionForce(m_explosionPower, p.transform.position, m_explosionRadius);
-            }
         }
 
         private void Start()
         {
             gameObject.SetActive(true);
             m_broken.SetActive(false);
+        }
+
+        private void OnDisable()
+        {
+            m_broken.SetActive(true);
+            foreach (var p in m_brokenParts)
+            {
+                p.GetComponent<Rigidbody>().AddExplosionForce(m_explosionPower, p.transform.position, m_explosionRadius);
+            }
         }
 
         private void OnCollisionEnter(Collision col)

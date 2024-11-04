@@ -18,7 +18,7 @@ public class LevelController : MonoBehaviour
 
     private void OnEnable()
     {
-        m_timer = Time.time - m_delay;
+        m_timer = Time.time;
         m_platformController.OnDangerHit += PlatformHit;
     }
 
@@ -30,11 +30,6 @@ public class LevelController : MonoBehaviour
     public void Disable()
     {
         gameObject.SetActive(false);
-    }
-
-    public void Enable()
-    {
-        gameObject.SetActive(true);
     }
 
     private void Update()
@@ -49,7 +44,7 @@ public class LevelController : MonoBehaviour
     private void PlatformHit()
     {
         if (--nLives == 0) {
-            m_platformController.Break();
+            m_platformController.Disable();
             OnLose?.Invoke();
         }
     }

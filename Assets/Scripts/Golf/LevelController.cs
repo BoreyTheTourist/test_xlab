@@ -9,10 +9,11 @@ public class LevelController : MonoBehaviour
 {
     [SerializeField] private ObjectSpawner m_stoneSpawner;
     [SerializeField] private PlatformController m_platformController;
+    [SerializeField] private CanvasController m_canvasController;
     [SerializeField] private float m_delay = 2f;
     private float m_timer = 0f;
 
-    public byte nLives = 1;
+    public byte nLives = 2;
     public event Action OnLose;
     public event Action OnWin;
 
@@ -44,6 +45,7 @@ public class LevelController : MonoBehaviour
     private void PlatformHit()
     {
         if (--nLives == 0) {
+            m_canvasController?.Crack(true);
             m_platformController.Disable();
             OnLose?.Invoke();
         }

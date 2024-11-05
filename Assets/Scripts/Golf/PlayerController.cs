@@ -37,7 +37,6 @@ namespace Golf {
 
         private void OnEnable()
         {
-            print(m_isRestart);
             if (m_isRestart) {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }

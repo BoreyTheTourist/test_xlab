@@ -11,6 +11,7 @@ namespace Golf {
     public class PlayerController : MonoBehaviour
     {
         public StickController stickController;
+        public BeatController beatController;
         public LevelController levelController;
         public Rigidbody body;
         private PlayerInput m_input;
@@ -19,10 +20,11 @@ namespace Golf {
         private void Awake()
         {
             m_input = new PlayerInput();
-            m_input.Player.TouchPress.started += _ => stickController.Swing();
+            m_input.Player.TouchPress.started += _ => beatController.Return();
             m_input.Player.TouchPress.canceled += _ => {
                 if (gameObject.activeSelf) {
                     stickController.Release();
+                    beatController.Return();
                 } else {
                     m_isRestart = true;
                     gameObject.SetActive(true);

@@ -5,16 +5,14 @@ namespace Golf {
     public class BeatController : MonoBehaviour
     {
         [SerializeField] private Collider m_target;
-        [SerializeField] private float m_power = 10f;
         [SerializeField] private GameObject m_ballPrefab;
+        [SerializeField] private float m_power = 10f;
         [SerializeField] private bool m_deviationX = true;
         [SerializeField] private bool m_deviationY;
         [SerializeField] private bool m_deviationZ;
         private GameObject m_ball;
 
-        private void Start()
-        {
-        }
+        public event System.Action<Vector3?> OnBallCollsion;
 
         public void Serve()
         {
@@ -24,12 +22,25 @@ namespace Golf {
             }
         }
 
-        public void Return()
+        /// <summary>
+        /// Tries to hit ball in half
+        /// </summary>
+        /// <returns>If ball in specified half normalized position ([-1, 1])</returns>
+        public Vector2? Return(Half half)
         {
             if (m_ball) {
-                Beat(m_ball);
-                print("kuku");
+                bool isHitLeft = half == Half.Left;
+                var col = GetComponent<Collider>();
+                var ballPosition = m_ball.transform.position - col.bounds.center;
+                bool isBallCenter = Mathf.Abs(ballPosition.x) < m_ball.GetComponent<Collider>().bounds.max.x;
+                if (isBallCenter || isHitLeft ^ ballPosition.x > 0) {
+                    Beat(m_ball);
+                    ballPosition.x /= col.bounds.extents.x;
+                    ballPosition.y /= col.bounds.extents.y;
+                    return ballPosition;
+                }
             }
+            return null;
         }
 
         private void Beat(GameObject obj)
@@ -54,7 +65,6 @@ namespace Golf {
         private void OnTriggerEnter(Collider col)
         {
             m_ball = col.gameObject;
-            print("ball in");
         }
 
         private void OnTriggerExit(Collider col)

@@ -1,87 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Runtime;
+using System;
+using System.Threading;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
-public class StickController : MonoBehaviour
+namespace Golf
 {
-    enum State {
-        Swinging, Released, Idle,
-    }
-    [SerializeField] private float m_maxAngle = 30f;
-    [SerializeField] private float m_powerFactor = 0.01f;
-    public float m_swingFactor = 10f;
-    private Vector3 m_force = Vector3.zero;
-    private State m_state = State.Idle;
-
-    [SerializeField] private Rigidbody m_rb;
-
-    private void Start()
+    public class StickController : MonoBehaviour
     {
-        m_rb.maxAngularVelocity = 20f;
-    }
+        [SerializeField] private Transform m_stick;
+        [SerializeField] private Collider  m_border;
+        [SerializeField] private float m_swingAngle = 20f;
+        [SerializeField] private float m_swingSpeed = 100f;
+        private float m_stickDifCenterX;
+        private float m_defaultAngle;
+        private Half m_half = Half.Right;
+        private bool m_isSwing = false;
 
-    public void Swing()
-    {
-        m_rb.angularVelocity = Vector3.zero;
-        m_state = State.Swinging;
-    }
-
-    public void Release()
-    {
-        m_state = State.Released;
-    }
-
-    private void OnEnable()
-    {
-        m_rb.gameObject.SetActive(true);
-    }
-
-    private void OnDisable()
-    {
-        m_rb.gameObject.SetActive(false);
-    }
-
-    public void Disable()
-    {
-        gameObject.SetActive(false);
-    }
-
-    public void Enable()
-    {
-        gameObject.SetActive(true);
-    }
-
-    private void FixedUpdate()
-    {
-        var angle = m_rb.rotation.eulerAngles.z;
-        switch (m_state) {
-            case State.Swinging:
-            if (angle > m_maxAngle && angle < 180) {
-                m_rb.angularVelocity = Vector3.zero;
-            } else {
-                m_rb.AddRelativeTorque(Vector3.forward * m_rb.mass * m_swingFactor);
+        private void Start()
+        {
+            if (m_stick) {
+                m_defaultAngle = m_stick.localEulerAngles.y;
+                if (m_border) {
+                    m_stickDifCenterX = m_border.bounds.center.x - m_stick.position.x;
+                }
             }
-            m_force += Vector3.back;
-            break;
+        }
 
-            case State.Released:
-            m_state = State.Idle;
-            m_rb.angularVelocity = Vector3.zero;
-            m_rb.AddRelativeTorque(m_force * m_rb.mass * m_powerFactor, ForceMode.Impulse);
-            m_force = Vector3.zero;
-            break;
-
-            case State.Idle:
-            if (angle > 180 && angle < 360 - m_maxAngle) {
-                m_rb.angularVelocity = Vector3.zero;
+        /// <summary>
+        /// Move to normalized ([-1, 1]) point in half
+        /// </summary>
+        /// <param name="pos">Normalized point to move</param>
+        public void Move(Vector2 pos, Half half) {
+            if (m_half != half) {
+                m_half = half;
+                m_swingAngle = 360 - m_swingAngle;
+                m_defaultAngle = 360 - m_defaultAngle;
+                var angles = m_stick.localEulerAngles;
+                angles.y = m_defaultAngle;
+                m_stick.localEulerAngles = angles;
+                m_stickDifCenterX = -m_stickDifCenterX;
             }
-            break;
+            var newPos = m_stick.position;
+            newPos.x = m_border.bounds.extents.x * (pos.x + 1f) + m_border.bounds.min.x - m_stickDifCenterX;
+            m_stick.position = newPos;
+        }
+
+        public void Swing()
+        {
+            m_stick.localEulerAngles += Vector3.up * m_swingAngle;
+            m_isSwing = true;
+        }
+
+        public void Disable()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void Enable()
+        {
+            gameObject.SetActive(true);
+        }
+
+        private void Update()
+        {
+            if (m_isSwing) {
+                var angles = m_stick.localEulerAngles;
+                angles.y = Mathf.MoveTowardsAngle(angles.y, m_defaultAngle, m_swingSpeed * Time.deltaTime);
+                if (Mathf.Abs(angles.y - m_defaultAngle) < 0.1) {
+                    m_isSwing = false;
+                    return;
+                }
+                m_stick.localEulerAngles = angles;
+            }
         }
     }
 }

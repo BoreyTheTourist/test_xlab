@@ -22,7 +22,9 @@ namespace Golf {
 
         private void OnEnable()
         {
-            body.useGravity = false;
+            if (stickController) {
+                stickController.gameObject.SetActive(true);
+            }
             if (leftHitTrigger) {
                 leftHitEntry = new EventTrigger.Entry();
                 leftHitEntry.eventID = EventTriggerType.PointerClick;
@@ -43,11 +45,11 @@ namespace Golf {
         private void OnDisable()
         {
             if (stickController) {
-                stickController.Disable();
+                stickController.gameObject.SetActive(false);
             }
             if (levelController) {
                 levelController.OnLose -= Lose;
-                levelController.Disable();
+                levelController.gameObject.SetActive(false);
             }
             if (leftHitTrigger) {
                 leftHitTrigger.triggers.Remove(leftHitEntry);
@@ -55,7 +57,6 @@ namespace Golf {
             if (rightHitTrigger) {
                 rightHitTrigger.triggers.Remove(rightHitEntry);
             }
-            body.useGravity = true;
         }
 
         private void Hit(PointerEventData data, Half half) {

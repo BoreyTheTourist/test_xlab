@@ -29,11 +29,6 @@ namespace Golf {
             //m_platformController.OnDangerHit -= PlatformHit;
         }
 
-        public void Disable()
-        {
-            gameObject.SetActive(false);
-        }
-
         private void Update()
         {
             if (Time.time > m_timer + m_delay)

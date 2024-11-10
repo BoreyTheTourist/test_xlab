@@ -14,7 +14,7 @@ namespace Golf {
         [SerializeField] private PlatformController m_platformController;
         [SerializeField] private CanvasController m_canvasController;
         [SerializeField] private float m_delay = 2f;
-        private byte m_victoryScore = 3;
+        private byte m_victoryScore = 1;
         private byte m_playerScore = 0;
         private byte m_enemyScore = 0;
         private GameObject m_ball;
@@ -32,6 +32,7 @@ namespace Golf {
                 m_playerBeat.OnBallExit += PlayerReturn;
             }
             if (m_enemy) {
+                m_enemy.gameObject.SetActive(true);
                 m_enemy.beatController.OnBallExit += EnemyReturn;
             }
             StartCoroutine(StartServe());
@@ -40,6 +41,7 @@ namespace Golf {
         private void OnDisable()
         {
             if (m_enemy) {
+                m_enemy.gameObject.SetActive(false);
                 m_enemy.beatController.OnBallExit -= EnemyReturn;
             }
             if (m_playerBeat) {
@@ -52,8 +54,9 @@ namespace Golf {
             if (!isReturn) {
                 OnPlayerScore?.Invoke(++m_playerScore);
                 if (m_playerScore >= m_victoryScore) {
-                    OnWin.Invoke();
+                    StartCoroutine(Win());
                 } else {
+                    m_enemy.GetHit();
                     StartCoroutine(StartServe());
                 }
             }
@@ -75,6 +78,13 @@ namespace Golf {
             if (m_ball) Destroy(m_ball);
             yield return new WaitForSeconds(m_delay);
             m_enemy.Serve(ball => m_ball = ball);
+        }
+
+        private IEnumerator Win()
+        {
+            if (m_ball) Destroy(m_ball);
+            StartCoroutine(m_enemy.Die(() => OnWin?.Invoke()));
+            yield break;
         }
     }
 }

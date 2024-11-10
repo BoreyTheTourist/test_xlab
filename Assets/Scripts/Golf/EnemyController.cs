@@ -10,6 +10,9 @@ namespace Golf
         [SerializeField] private Animator m_animator;
         [SerializeField] private string m_serveTrigger;
         [SerializeField] private string m_returnTrigger;
+        [SerializeField] private string m_getHitTrigger;
+        [SerializeField] private string m_dieTrigger;
+        [SerializeField] private string m_defaultTrigger;
         [SerializeField] private AnimationEventReciever m_animationReceiver;
         private float m_hitChance = .7f;
         private System.Action<GameObject> m_serveCb;
@@ -19,6 +22,7 @@ namespace Golf
 
         private void OnEnable()
         {
+            m_animator.SetTrigger(m_defaultTrigger);
             if (m_beatController) {
                 m_beatController.OnBallEnter += Hit;
             }
@@ -72,6 +76,20 @@ namespace Golf
             if (m_beatController) {
                 m_beatController.Return();
             }
+        }
+
+        public void GetHit()
+        {
+            m_animator.SetTrigger(m_getHitTrigger);
+        }
+
+        public IEnumerator Die(System.Action cb)
+        {
+            m_animator.ResetTrigger(m_defaultTrigger);
+            m_animator.SetTrigger(m_dieTrigger);
+            yield return null;
+            yield return new WaitUntil(() => m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
+            cb();
         }
     }
 }

@@ -11,14 +11,28 @@ namespace Golf {
         [SerializeField] private bool m_deviationY;
         [SerializeField] private bool m_deviationZ;
         private GameObject m_ball;
+        private bool m_wasHit = false;
 
-        public event System.Action<Vector3?> OnBallCollsion;
+        public event System.Action OnBallEnter;
+        public event System.Action<bool> OnBallExit;
 
-        public void Serve()
+        public GameObject Serve()
         {
             if (m_ballPrefab) {
                 var obj = Instantiate(m_ballPrefab, transform.position, transform.rotation);
                 Beat(obj);
+                return obj;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Just hits ball
+        /// </summary>
+        public void Return()
+        {
+            if (m_ball) {
+                Beat(m_ball);
             }
         }
 
@@ -45,6 +59,7 @@ namespace Golf {
 
         private void Beat(GameObject obj)
         {
+            m_wasHit = true;
             if (obj.TryGetComponent<Rigidbody>(out var rb)) {
                 var target = m_target.bounds.center;
                 var dev = m_target.bounds.size * 0.5f;
@@ -65,11 +80,14 @@ namespace Golf {
         private void OnTriggerEnter(Collider col)
         {
             m_ball = col.gameObject;
+            OnBallEnter?.Invoke();
         }
 
         private void OnTriggerExit(Collider col)
         {
             m_ball = null;
+            OnBallExit?.Invoke(m_wasHit);
+            m_wasHit = false;
         }
     }
 }

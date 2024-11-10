@@ -6,32 +6,82 @@ namespace Golf
 {
     public class GamePlayState : MonoBehaviour
     {
-        public GameObject gamePlayUI;
+        public GameObject playUI;
         public TMPro.TextMeshProUGUI playerScore;
         public TMPro.TextMeshProUGUI enemyScore;
         public PlayerController playerController;
         public LevelController levelController;
-        public GameEndState gameEndState;
+        public GameWinState winState;
+        public GameLoseState loseState;
 
         private void OnEnable()
         {
-            gamePlayUI.SetActive(true);
-            playerController.gameObject.SetActive(true);
-            levelController.gameObject.SetActive(true);
-
+            if (playUI) {
+                playUI.SetActive(true);
+            }
+            if (playerController) {
+                playerController.gameObject.SetActive(true);
+            }
+            if (levelController) {
+                levelController.gameObject.SetActive(true);
+                levelController.OnEnemyScore += EnemyScoreUpdate;
+                levelController.OnPlayerScore += PlayerScoreUpdate;
+                if (winState) {
+                    levelController.OnWin += Win;
+                }
+                if (loseState) {
+                    levelController.OnLose += Lose;
+                }
+            }
+            if (enemyScore) {
+                enemyScore.text = "0";
+            }
+            if (playerScore) {
+                playerScore.text = "0";
+            }
         }
 
         private void OnDisable()
         {
-            playerController.gameObject.SetActive(false);
-            levelController.gameObject.SetActive(false);
-            gamePlayUI.SetActive(false);
+            if (playUI) {
+                playUI.SetActive(false);
+            }
+            if (playerController) {
+                playerController.gameObject.SetActive(false);
+            }
+            if (levelController) {
+                levelController.gameObject.SetActive(false);
+                levelController.OnEnemyScore -= EnemyScoreUpdate;
+                levelController.OnPlayerScore -= PlayerScoreUpdate;
+                if (winState) {
+                    levelController.OnWin -= Win;
+                }
+                if (loseState) {
+                    levelController.OnLose -= Lose;
+                }
+            }
         }
 
-        public void Enter()
+        private void PlayerScoreUpdate(byte score)
         {
-            gameObject.SetActive(true);
-            print("kuku");
+            playerScore.text = score.ToString();
+        }
+
+        private void EnemyScoreUpdate(byte score)
+        {
+            enemyScore.text = score.ToString();
+        }
+
+        private void Win()
+        {
+            winState.gameObject.SetActive(true);
+            gameObject.SetActive(false);
+        }
+
+        private void Lose()
+        {
+            loseState.gameObject.SetActive(true);
+            gameObject.SetActive(false);
         }
     }
 }

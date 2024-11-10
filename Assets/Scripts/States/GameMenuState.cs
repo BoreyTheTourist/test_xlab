@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Golf
 {
-    public class MainMenuState : MonoBehaviour
+    public class GameMenuState : MonoBehaviour
     {
         public GameObject mainMenuUI;
         public GamePlayState gamePlayState;
@@ -29,7 +29,7 @@ namespace Golf
         public void Play()
         {
             gameObject.SetActive(false);
-            gamePlayState.Enter();
+            gamePlayState.gameObject.SetActive(true);
         }
 
         public void Quit()

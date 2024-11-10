@@ -16,7 +16,6 @@ namespace Golf
 
         private void OnEnable()
         {
-            print("kuku");
             if (loseUI) {
                 loseUI.SetActive(true);
             }

@@ -74,8 +74,7 @@ namespace Golf {
         {
             if (m_ball) Destroy(m_ball);
             yield return new WaitForSeconds(m_delay);
-            m_ball = m_enemy.Serve();
-            yield break;
+            m_enemy.Serve(ball => m_ball = ball);
         }
     }
 }

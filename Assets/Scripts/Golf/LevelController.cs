@@ -10,10 +10,10 @@ namespace Golf {
     public class LevelController : MonoBehaviour
     {
         [SerializeField] private EnemyController m_enemy;
-        [SerializeField] private BeatController m_playerBeat;
-        [SerializeField] private PlatformController m_platformController;
+        [SerializeField] private PlayerController m_player;
         [SerializeField] private CanvasController m_canvasController;
-        [SerializeField] private float m_delay = 2f;
+        [SerializeField] private float m_delayServe = 2f;
+        [SerializeField] private float m_delayLose = 3f;
         private byte m_victoryScore = 1;
         private byte m_playerScore = 0;
         private byte m_enemyScore = 0;
@@ -28,8 +28,8 @@ namespace Golf {
         {
             m_playerScore = 0;
             m_enemyScore = 0;
-            if (m_playerBeat) {
-                m_playerBeat.OnBallExit += PlayerReturn;
+            if (m_player.beatController) {
+                m_player.beatController.OnBallExit += PlayerReturn;
             }
             if (m_enemy) {
                 m_enemy.gameObject.SetActive(true);
@@ -44,8 +44,8 @@ namespace Golf {
                 m_enemy.gameObject.SetActive(false);
                 m_enemy.beatController.OnBallExit -= EnemyReturn;
             }
-            if (m_playerBeat) {
-                m_playerBeat.OnBallExit -= PlayerReturn;
+            if (m_player.beatController) {
+                m_player.beatController.OnBallExit -= PlayerReturn;
             }
         }
 
@@ -66,7 +66,7 @@ namespace Golf {
             if (!isReturn) {
                 OnEnemyScore?.Invoke(++m_enemyScore);
                 if (m_enemyScore >= m_victoryScore) {
-                    OnLose.Invoke();
+                    StartCoroutine(Lose());
                 } else {
                     StartCoroutine(StartServe());
                 }
@@ -76,7 +76,7 @@ namespace Golf {
         private IEnumerator StartServe()
         {
             if (m_ball) Destroy(m_ball);
-            yield return new WaitForSeconds(m_delay);
+            yield return new WaitForSeconds(m_delayServe);
             m_enemy.Serve(ball => m_ball = ball);
         }
 
@@ -85,6 +85,13 @@ namespace Golf {
             if (m_ball) Destroy(m_ball);
             StartCoroutine(m_enemy.Die(() => OnWin?.Invoke()));
             yield break;
+        }
+
+        private IEnumerator Lose()
+        {
+            if (m_ball) Destroy(m_ball);
+            yield return new WaitForSeconds(m_delayLose);
+            OnLose.Invoke();
         }
     }
 }

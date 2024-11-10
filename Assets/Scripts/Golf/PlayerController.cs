@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -15,10 +16,8 @@ namespace Golf {
         public EventTrigger rightHitTrigger;
         public StickController stickController;
         public BeatController beatController;
-        public LevelController levelController;
         private EventTrigger.Entry leftHitEntry;
         private EventTrigger.Entry rightHitEntry;
-        public Rigidbody body;
 
         private void OnEnable()
         {
@@ -37,19 +36,12 @@ namespace Golf {
                 rightHitEntry.callback.AddListener(data => Hit((PointerEventData)data, Half.Right));
                 rightHitTrigger.triggers.Add(rightHitEntry);
             }
-            if (levelController) {
-                levelController.OnLose += Lose;
-            }
         }
 
         private void OnDisable()
         {
             if (stickController) {
                 stickController.gameObject.SetActive(false);
-            }
-            if (levelController) {
-                levelController.OnLose -= Lose;
-                levelController.gameObject.SetActive(false);
             }
             if (leftHitTrigger) {
                 leftHitTrigger.triggers.Remove(leftHitEntry);

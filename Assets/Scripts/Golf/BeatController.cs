@@ -50,6 +50,7 @@ namespace Golf {
         public Vector2? Return(Half half)
         {
             m_isReturn = true;
+            Vector2? res = null;
             if (m_ball && m_ball.TryGetComponent<Rigidbody>(out var rb)) {
                 bool isHitLeft = half == Half.Left;
                 var col = GetComponent<Collider>();
@@ -59,11 +60,11 @@ namespace Golf {
                     Beat(rb);
                     ballPosition.x /= col.bounds.extents.x;
                     ballPosition.y /= col.bounds.extents.y;
-                    return ballPosition;
+                    res = ballPosition;
                 }
             }
             m_isReturn = false;
-            return null;
+            return res;
         }
 
         private void Beat(Rigidbody rb)

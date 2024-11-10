@@ -19,7 +19,7 @@ namespace Golf
         private Half m_half = Half.Right;
         private bool m_isSwing = false;
 
-        private void OnEnable()
+        private void Start()
         {
             if (m_stick) {
                 m_defaultAngle = m_stick.transform.localEulerAngles.y;
@@ -50,8 +50,10 @@ namespace Golf
 
         public void Swing()
         {
-            m_stick.transform.localEulerAngles += Vector3.up * m_swingAngle;
-            m_isSwing = true;
+            if (!m_isSwing) {
+                m_stick.transform.localEulerAngles += Vector3.up * m_swingAngle;
+                m_isSwing = true;
+            }
         }
 
         private void Update()

@@ -57,6 +57,7 @@ namespace Golf {
         /// <returns>If ball in specified half normalized position ([-1, 1])</returns>
         public Vector2? Return(Half half)
         {
+            if (m_wasHit) return null;
             if (m_ball && m_ball.TryGetComponent<Rigidbody>(out var rb)) {
                 bool isHitLeft = half == Half.Left;
                 var col = GetComponent<Collider>();

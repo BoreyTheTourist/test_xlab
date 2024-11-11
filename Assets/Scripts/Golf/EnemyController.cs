@@ -7,6 +7,8 @@ namespace Golf
     public class EnemyController : MonoBehaviour
     {
         [SerializeField] private BeatController m_beatController;
+
+        [Header("Animation")]
         [SerializeField] private Animator m_animator;
         [SerializeField] private string m_serveTrigger;
         [SerializeField] private string m_returnTrigger;
@@ -14,10 +16,22 @@ namespace Golf
         [SerializeField] private string m_dieTrigger;
         [SerializeField] private string m_defaultTrigger;
         [SerializeField] private AnimationEventReciever m_animationReceiver;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip m_serveClip;
+        [SerializeField] private AudioClip m_hitClip;
+        [SerializeField] private AudioClip m_getHitClip;
+        [SerializeField] private AudioClip m_dieClip;
+
         private System.Action<GameObject> m_serveCb;
-        private bool m_isServe;
+        private AudioSource m_audioSource;
         
         public BeatController beatController { get => m_beatController; }
+
+        private void Start()
+        {
+            TryGetComponent<AudioSource>(out m_audioSource);
+        }
 
         private void OnEnable()
         {
@@ -45,12 +59,14 @@ namespace Golf
         public void Serve(System.Action<GameObject> cb)
         {
             m_animator.SetTrigger(m_serveTrigger);
-            m_isServe = true;
             m_serveCb = cb;
         }
 
         private void ServeCb()
         {
+            if (m_audioSource && m_serveClip) {
+                m_audioSource.PlayOneShot(m_serveClip);
+            }
             if (m_serveCb != null) {
                 if (m_beatController) {
                     m_serveCb(m_beatController.Serve());
@@ -62,16 +78,18 @@ namespace Golf
 
         private void Hit()
         {
-            if (!m_isServe && Random.value < GameInstance.settings.enemyPrecision) {
+            if (Random.value < GameInstance.settings.enemyPrecision) {
                 Physics.simulationMode = SimulationMode.Script;
                 m_animator.SetTrigger(m_returnTrigger);
             }
-            m_isServe = false;
         }
 
         private void HitCb()
         {
             Physics.simulationMode = SimulationMode.FixedUpdate;
+            if (m_audioSource && m_hitClip) {
+                m_audioSource.PlayOneShot(m_hitClip);
+            }
             if (m_beatController) {
                 m_beatController.Return();
             }
@@ -80,11 +98,17 @@ namespace Golf
         public void GetHit()
         {
             m_animator.SetTrigger(m_getHitTrigger);
+            if (m_audioSource && m_getHitClip) {
+                m_audioSource.PlayOneShot(m_getHitClip);
+            }
         }
 
         public IEnumerator Die(System.Action cb)
         {
             m_animator.ResetTrigger(m_defaultTrigger);
+            if (m_audioSource && m_dieClip) {
+                m_audioSource.PlayOneShot(m_dieClip);
+            }
             m_animator.SetTrigger(m_dieTrigger);
             yield return null;
             yield return new WaitUntil(() => m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);

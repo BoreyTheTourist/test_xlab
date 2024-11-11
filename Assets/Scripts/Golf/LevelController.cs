@@ -14,7 +14,6 @@ namespace Golf {
         [SerializeField] private CanvasController m_canvasController;
         [SerializeField] private float m_delayServe = 2f;
         [SerializeField] private float m_delayLose = 3f;
-        private byte m_victoryScore = 1;
         private byte m_playerScore = 0;
         private byte m_enemyScore = 0;
         private GameObject m_ball;
@@ -53,7 +52,7 @@ namespace Golf {
         {
             if (!isReturn) {
                 OnPlayerScore?.Invoke(++m_playerScore);
-                if (m_playerScore >= m_victoryScore) {
+                if (m_playerScore >= GameInstance.settings.winScore) {
                     StartCoroutine(Win());
                 } else {
                     m_enemy.GetHit();
@@ -65,7 +64,7 @@ namespace Golf {
         private void PlayerReturn(bool isReturn) {
             if (!isReturn) {
                 OnEnemyScore?.Invoke(++m_enemyScore);
-                if (m_enemyScore >= m_victoryScore) {
+                if (m_enemyScore >= GameInstance.settings.winScore) {
                     StartCoroutine(Lose());
                 } else {
                     StartCoroutine(StartServe());

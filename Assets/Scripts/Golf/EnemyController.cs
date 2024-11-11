@@ -14,7 +14,6 @@ namespace Golf
         [SerializeField] private string m_dieTrigger;
         [SerializeField] private string m_defaultTrigger;
         [SerializeField] private AnimationEventReciever m_animationReceiver;
-        private float m_hitChance = .7f;
         private System.Action<GameObject> m_serveCb;
         private bool m_isServe;
         
@@ -63,7 +62,7 @@ namespace Golf
 
         private void Hit()
         {
-            if (!m_isServe && Random.value < m_hitChance) {
+            if (!m_isServe && Random.value < GameInstance.settings.enemyPrecision) {
                 Physics.simulationMode = SimulationMode.Script;
                 m_animator.SetTrigger(m_returnTrigger);
             }

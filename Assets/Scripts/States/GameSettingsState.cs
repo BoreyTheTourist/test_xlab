@@ -40,7 +40,7 @@ namespace Golf
                 backButton.onClick.AddListener(Back);
             }
             if (winScoreSlider) {
-                winScoreSlider.onValueChanged.AddListener(WinScoreChange);
+                winScoreSlider.onValueChanged.AddListener(WinScoreTextChange);
             }
             if (mode) {
                 mode.onValueChanged.AddListener(ModeChange);
@@ -56,7 +56,7 @@ namespace Golf
                 backButton.onClick.RemoveListener(Back);
             }
             if (winScoreSlider) {
-                winScoreSlider.onValueChanged.RemoveListener(WinScoreChange);
+                winScoreSlider.onValueChanged.RemoveListener(WinScoreTextChange);
             }
             if (mode) {
                 mode.onValueChanged.RemoveListener(ModeChange);
@@ -70,7 +70,7 @@ namespace Golf
             }
         }
 
-        private void WinScoreChange(float score)
+        private void WinScoreTextChange(float score)
         {
             if (winScoreText) {
                 if (score < 10) {
@@ -85,15 +85,20 @@ namespace Golf
         {
             switch (mode.options[idx].text) {
                 case EASYMODE:
+                GameInstance.ChangeMode(GameInstance.Mode.Easy);
                 break;
 
                 case NORMALMODE:
+                GameInstance.ChangeMode(GameInstance.Mode.Normal);
                 break;
 
                 case HARDMODE:
+                GameInstance.ChangeMode(GameInstance.Mode.Hard);
                 break;
             }
-            print(mode.options[idx].text);
+            if (winScoreSlider) {
+                winScoreSlider.value = GameInstance.settings.winScore;
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ namespace Golf {
     {
         [SerializeField] private Collider m_target;
         [SerializeField] private GameObject m_ballPrefab;
-        [SerializeField] private float m_power = 10f;
         [SerializeField] private bool m_deviationX = true;
         [SerializeField] private bool m_deviationY;
         [SerializeField] private bool m_deviationZ;
@@ -81,7 +80,8 @@ namespace Golf {
             if (m_deviationZ) {
                 target.z += Random.Range(-dev.z, maxInclusive: dev.z);
             }
-            rb.velocity = (target - rb.gameObject.transform.position).normalized * m_power;
+            var power = Random.Range(GameInstance.settings.minBallSpeed, maxInclusive: GameInstance.settings.maxBallSpeed);
+            rb.velocity = (target - rb.gameObject.transform.position).normalized * power;
         }
 
         private void OnTriggerEnter(Collider col)

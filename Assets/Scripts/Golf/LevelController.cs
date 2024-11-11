@@ -48,27 +48,23 @@ namespace Golf {
             }
         }
 
-        private void EnemyReturn(bool isReturn)
+        private void EnemyReturn()
         {
-            if (!isReturn) {
-                OnPlayerScore?.Invoke(++m_playerScore);
-                if (m_playerScore >= GameInstance.settings.winScore) {
-                    StartCoroutine(Win());
-                } else {
-                    m_enemy.GetHit();
-                    StartCoroutine(StartServe());
-                }
+            OnPlayerScore?.Invoke(++m_playerScore);
+            if (m_playerScore >= GameInstance.settings.winScore) {
+                StartCoroutine(Win());
+            } else {
+                m_enemy.GetHit();
+                StartCoroutine(StartServe());
             }
         }
 
-        private void PlayerReturn(bool isReturn) {
-            if (!isReturn) {
-                OnEnemyScore?.Invoke(++m_enemyScore);
-                if (m_enemyScore >= GameInstance.settings.winScore) {
-                    StartCoroutine(Lose());
-                } else {
-                    StartCoroutine(StartServe());
-                }
+        private void PlayerReturn() {
+            OnEnemyScore?.Invoke(++m_enemyScore);
+            if (m_enemyScore >= GameInstance.settings.winScore) {
+                StartCoroutine(Lose());
+            } else {
+                StartCoroutine(StartServe());
             }
         }
 

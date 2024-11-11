@@ -16,7 +16,7 @@ namespace Golf {
         private Coroutine m_ballExit;
 
         public event System.Action OnBallEnter;
-        public event System.Action<bool> OnBallExit;
+        public event System.Action OnBallExit;
 
         public GameObject Serve()
         {
@@ -69,6 +69,9 @@ namespace Golf {
         private void Beat(Rigidbody rb)
         {
             m_wasHit = true;
+            if (m_ballExit != null) {
+                StopCoroutine(m_ballExit);
+            }
             var target = m_target.bounds.center;
             var dev = m_target.bounds.size * 0.5f;
             if (m_deviationX) {
@@ -100,9 +103,13 @@ namespace Golf {
 
         private IEnumerator BallExit()
         {
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
             yield return new WaitUntil(() => !m_isReturn);
-            m_ball = null;
-            OnBallExit?.Invoke(m_wasHit);
+            if (!m_wasHit) {
+                m_ball = null;
+                OnBallExit?.Invoke();
+            }
             m_wasHit = false;
         }
     }

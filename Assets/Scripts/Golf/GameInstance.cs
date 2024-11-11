@@ -9,9 +9,17 @@ namespace Golf
         public enum Mode {
             Easy, Normal, Hard
         }
+        private static readonly Dictionary<Mode, GameSettings> m_defaultSettings = new Dictionary<Mode, GameSettings>();
         public static GameSettings settings;
         public Transform states;
-        // public 
+        
+        private void Awake()
+        {
+            m_defaultSettings.Add(Mode.Easy, (GameSettings)Resources.Load("EasyMode"));
+            m_defaultSettings.Add(Mode.Normal, (GameSettings)Resources.Load("NormalMode"));
+            m_defaultSettings.Add(Mode.Hard, (GameSettings)Resources.Load("HardMode"));
+        }
+        
         private void Start()
         {
             foreach (Transform state in states) {
@@ -22,17 +30,7 @@ namespace Golf
 
         public static void ChangeMode(Mode mode)
         {
-            switch (mode) {
-                case Mode.Easy:
-                settings = (GameSettings)Resources.Load("EasyMode");
-                break;
-                case Mode.Normal:
-                settings = (GameSettings)Resources.Load("NormalMode");
-                break;
-                case Mode.Hard:
-                settings = (GameSettings)Resources.Load("HardMode");
-                break;
-            }
+            settings = new GameSettings(m_defaultSettings[mode]);
         }
     }
 }

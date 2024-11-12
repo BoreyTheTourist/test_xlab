@@ -79,8 +79,8 @@ namespace Golf {
             }
             yield return new WaitForSeconds(m_delayServe);
             if (m_ball) Destroy(m_ball);
-            m_enemy.Serve(ball => m_ball = ball);
             m_isPending = false;
+            m_enemy.Serve(ball => m_ball = ball);
         }
 
         private IEnumerator Win()

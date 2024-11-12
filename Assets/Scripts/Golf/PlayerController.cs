@@ -16,19 +16,10 @@ namespace Golf {
         public EventTrigger rightHitTrigger;
         public StickController stickController;
         public BeatController beatController;
-
-        [Header("Audio")]
-        public AudioClip swingAudio;
-        public AudioClip hitAudio;
+        public PlayerSFXController m_sfx;
 
         private EventTrigger.Entry leftHitEntry;
         private EventTrigger.Entry rightHitEntry;
-        private AudioSource m_audioSource;
-
-        private void Start()
-        {
-            TryGetComponent<AudioSource>(out m_audioSource);
-        }
 
         private void OnEnable()
         {
@@ -70,22 +61,17 @@ namespace Golf {
                 var bPos = beatController.Return(half);
                 if (bPos.HasValue) {
                     pos = bPos.Value;
-                    if (m_audioSource && hitAudio) {
-                        m_audioSource.PlayOneShot(hitAudio);
+                    if (m_sfx) {
+                        m_sfx.Hit();
                     }
-                } else if (m_audioSource && swingAudio) {
-                    m_audioSource.PlayOneShot(swingAudio);
+                } else if (m_sfx) {
+                    m_sfx.Swing();
                 }
             }
             if (stickController) {
                 stickController.Move(pos, half);
                 stickController.Swing();
             }
-        }
-
-        private void Lose()
-        {
-            gameObject.SetActive(false);
         }
     }
 }

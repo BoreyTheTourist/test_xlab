@@ -6,7 +6,9 @@ namespace Golf
 {
     public class EnemyController : MonoBehaviour
     {
+        public BeatController beatController { get => m_beatController; }
         [SerializeField] private BeatController m_beatController;
+        [SerializeField] private EnemySFXController m_sfx;
 
         [Header("Animation")]
         [SerializeField] private Animator m_animator;
@@ -17,22 +19,8 @@ namespace Golf
         [SerializeField] private string m_defaultTrigger;
         [SerializeField] private AnimationEventReciever m_animationReceiver;
 
-        [Header("Audio")]
-        [SerializeField] private AudioClip m_serveClip;
-        [SerializeField] private AudioClip m_hitClip;
-        [SerializeField] private AudioClip m_getHitClip;
-        [SerializeField] private AudioClip m_dieClip;
-
         private System.Action<GameObject> m_serveCb;
-        private AudioSource m_audioSource;
         
-        public BeatController beatController { get => m_beatController; }
-
-        private void Start()
-        {
-            TryGetComponent<AudioSource>(out m_audioSource);
-        }
-
         private void OnEnable()
         {
             m_animator.SetTrigger(m_defaultTrigger);
@@ -64,8 +52,8 @@ namespace Golf
 
         private void ServeCb()
         {
-            if (m_audioSource && m_serveClip) {
-                m_audioSource.PlayOneShot(m_serveClip);
+            if (m_sfx) {
+                m_sfx.Serve();
             }
             if (m_serveCb != null) {
                 if (m_beatController) {
@@ -87,8 +75,8 @@ namespace Golf
         private void HitCb()
         {
             Physics.simulationMode = SimulationMode.FixedUpdate;
-            if (m_audioSource && m_hitClip) {
-                m_audioSource.PlayOneShot(m_hitClip);
+            if (m_sfx) {
+                m_sfx.Hit();
             }
             if (m_beatController) {
                 m_beatController.Return();
@@ -98,16 +86,16 @@ namespace Golf
         public void GetHit()
         {
             m_animator.SetTrigger(m_getHitTrigger);
-            if (m_audioSource && m_getHitClip) {
-                m_audioSource.PlayOneShot(m_getHitClip);
+            if (m_sfx) {
+                m_sfx.GetHit();
             }
         }
 
         public IEnumerator Die(System.Action cb)
         {
             m_animator.ResetTrigger(m_defaultTrigger);
-            if (m_audioSource && m_dieClip) {
-                m_audioSource.PlayOneShot(m_dieClip);
+            if (m_sfx) {
+                m_sfx.Die();
             }
             m_animator.SetTrigger(m_dieTrigger);
             yield return null;

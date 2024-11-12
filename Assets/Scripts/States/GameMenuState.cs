@@ -43,7 +43,7 @@ namespace Golf
 
         private void SettingsEnter()
         {
-            settingsState.gameObject.SetActive(true);
+            settingsState.Enter(gameObject);
             gameObject.SetActive(false);
         }
     }

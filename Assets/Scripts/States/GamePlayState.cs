@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Golf
 {
@@ -13,6 +14,8 @@ namespace Golf
         public LevelController levelController;
         public GameWinState winState;
         public GameLoseState loseState;
+        public Button pauseButton;
+        public GamePauseState pauseState;
 
         private void OnEnable()
         {
@@ -39,6 +42,9 @@ namespace Golf
             if (playerScore) {
                 playerScore.text = "0";
             }
+            if (pauseButton) {
+                pauseButton.onClick.AddListener(Pause);
+            }
         }
 
         private void OnDisable()
@@ -59,6 +65,9 @@ namespace Golf
                 if (loseState) {
                     levelController.OnLose -= Lose;
                 }
+            }
+            if (pauseButton) {
+                pauseButton.onClick.RemoveListener(Pause);
             }
         }
 
@@ -82,6 +91,14 @@ namespace Golf
         {
             loseState.gameObject.SetActive(true);
             gameObject.SetActive(false);
+        }
+
+        private void Pause()
+        {
+            if (pauseState) {
+                playUI.SetActive(false);
+                pauseState.Enter(playUI);
+            }
         }
     }
 }

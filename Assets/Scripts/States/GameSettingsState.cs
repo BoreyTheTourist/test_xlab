@@ -11,7 +11,6 @@ namespace Golf
     public class GameSettingsState : MonoBehaviour
     {
         public GameObject settingsUI;
-        public GameMenuState menuState;
         public Slider winScoreSlider;
         public TMPro.TextMeshProUGUI winScoreText;
         public Slider music;
@@ -23,6 +22,8 @@ namespace Golf
         private const string EASYMODE = "по-детски";
         private const string NORMALMODE = "по-серьёзному";
         private const string HARDMODE = "насмерть";
+
+        private GameObject m_previousState;
 
         private void Start()
         {
@@ -60,9 +61,11 @@ namespace Golf
                 backButton.onClick.AddListener(Back);
             }
             if (winScoreSlider) {
+                winScoreSlider.interactable = true;
                 winScoreSlider.onValueChanged.AddListener(WinScoreChange);
             }
             if (mode) {
+                mode.interactable = true;
                 mode.onValueChanged.AddListener(ModeChange);
             }
             if (music) {
@@ -95,9 +98,26 @@ namespace Golf
             }
         }
 
+        public void Enter(GameObject prev)
+        {
+            m_previousState = prev;
+            gameObject.SetActive(true);
+        }
+
+        public void DisableModeChanges()
+        {
+            if (winScoreSlider) {
+                winScoreSlider.interactable = false;
+            }
+            if (mode) {
+                mode.interactable = false;
+            }
+        }
+
         private void Back() {
-            if (menuState) {
-                menuState.gameObject.SetActive(true);
+            if (m_previousState) {
+                m_previousState.SetActive(true);
+                m_previousState = null;
                 gameObject.SetActive(false);
             }
         }

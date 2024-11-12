@@ -2746,7 +2746,7 @@ AudioSource:
   m_GameObject: {fileID: 302444216}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5685396766273247484, guid: ef71560b9c81e4114a9322667317de93, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -3289,6 +3289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 388689623}
+  - component: {fileID: 388689624}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -3314,6 +3315,19 @@ Transform:
   - {fileID: 783604553}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &388689624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 388689622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5de6d22f2546db6d9132f29562d55bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioMixer: {fileID: 24100000, guid: ef71560b9c81e4114a9322667317de93, type: 2}
 --- !u!1001 &393617872
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4164,9 +4178,10 @@ MonoBehaviour:
   winScoreSlider: {fileID: 1860350144}
   winScoreText: {fileID: 1996332218}
   music: {fileID: 1134910071}
-  sound: {fileID: 635919709}
+  sfx: {fileID: 635919709}
   mode: {fileID: 936739129}
   backButton: {fileID: 415258672}
+  audioManager: {fileID: 388689624}
 --- !u!1 &594182538
 GameObject:
   m_ObjectHideFlags: 0
@@ -4675,10 +4690,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 183022770}
   m_HandleRect: {fileID: 1212871420}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 100
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 50
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -5289,7 +5304,7 @@ AudioSource:
   m_GameObject: {fileID: 783604552}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5685396766273247484, guid: ef71560b9c81e4114a9322667317de93, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -6825,10 +6840,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 596901339}
   m_HandleRect: {fileID: 1959566624}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 100
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 50
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

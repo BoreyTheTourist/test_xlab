@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
 using UnityEngine.UIElements.Experimental;
 
@@ -14,9 +15,10 @@ namespace Golf
         public Slider winScoreSlider;
         public TMPro.TextMeshProUGUI winScoreText;
         public Slider music;
-        public Slider sound;
+        public Slider sfx;
         public TMP_Dropdown mode;
         public Button backButton;
+        public AudioManager audioManager;
 
         private const string EASYMODE = "по-детски";
         private const string NORMALMODE = "по-серьёзному";
@@ -28,6 +30,24 @@ namespace Golf
                 mode.ClearOptions();
                 mode.AddOptions(new List<string> { EASYMODE, NORMALMODE, HARDMODE });
                 mode.value = 1;
+            }
+            if (audioManager) {
+                if (music) {
+                    var v = audioManager.LoadMusicVolume();
+                    if (v.HasValue) {
+                        music.value = v.Value;
+                    } else {
+                        audioManager.SetMusicVolume(music.value);
+                    }
+                }
+                if (sfx) {
+                    var v = audioManager.LoadSFXVolume();
+                    if (v.HasValue) {
+                        sfx.value = v.Value;
+                    } else {
+                        audioManager.SetMusicVolume(sfx.value);
+                    }
+                }
             }
         }
 
@@ -45,6 +65,12 @@ namespace Golf
             if (mode) {
                 mode.onValueChanged.AddListener(ModeChange);
             }
+            if (music) {
+                music.onValueChanged.AddListener(MusicVolumeChange);
+            }
+            if (sfx) {
+                sfx.onValueChanged.AddListener(SFXVolumeChange);
+            }
         }
 
         private void OnDisable()
@@ -60,6 +86,12 @@ namespace Golf
             }
             if (mode) {
                 mode.onValueChanged.RemoveListener(ModeChange);
+            }
+            if (music) {
+                music.onValueChanged.RemoveListener(MusicVolumeChange);
+            }
+            if (sfx) {
+                sfx.onValueChanged.RemoveListener(SFXVolumeChange);
             }
         }
 
@@ -99,6 +131,16 @@ namespace Golf
             }
             if (winScoreSlider) {
                 winScoreSlider.value = GameInstance.settings.winScore;
+            }
+        }
+        private void MusicVolumeChange(float v) {
+            if (audioManager) {
+                audioManager.SetMusicVolume(v);
+            }
+        }
+        private void SFXVolumeChange(float v) {
+            if (audioManager) {
+                audioManager.SetSFXVolume(v);
             }
         }
     }

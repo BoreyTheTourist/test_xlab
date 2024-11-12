@@ -89,7 +89,9 @@ namespace Golf {
                 target.z += Random.Range(-dev.z, maxInclusive: dev.z);
             }
             var power = Random.Range(GameInstance.settings.minBallSpeed, maxInclusive: GameInstance.settings.maxBallSpeed);
-            rb.velocity = (target - rb.gameObject.transform.position).normalized * power;
+            var dir = (target - rb.gameObject.transform.position).normalized;
+            rb.velocity = dir * power;
+            rb.angularVelocity = dir * power;
         }
 
         private void OnTriggerEnter(Collider col)

@@ -17,7 +17,7 @@ namespace Golf
             GameInstance.OnModeChanged += ChangeBack;
         }
 
-        private void OnDisble()
+        private void OnDisable()
         {
             GameInstance.OnModeChanged -= ChangeBack;
         }

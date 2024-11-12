@@ -15,6 +15,7 @@ namespace Golf {
         private byte m_playerScore = 0;
         private byte m_enemyScore = 0;
         private GameObject m_ball;
+        private bool m_isPending = false;
 
         public event Action OnLose;
         public event Action OnWin;
@@ -48,8 +49,10 @@ namespace Golf {
 
         private void EnemyReturn()
         {
+            if (m_isPending) return;
+            m_isPending = true;
             OnPlayerScore?.Invoke(++m_playerScore);
-            if (m_playerScore >= GameInstance.settings.winScore) {
+            if (m_playerScore >= GameInstance.winScore) {
                 StartCoroutine(Win());
             } else {
                 m_enemy.GetHit();
@@ -58,8 +61,10 @@ namespace Golf {
         }
 
         private void PlayerReturn() {
+            if (m_isPending) return;
+            m_isPending = true;
             OnEnemyScore?.Invoke(++m_enemyScore);
-            if (m_enemyScore >= GameInstance.settings.winScore) {
+            if (m_enemyScore >= GameInstance.winScore) {
                 StartCoroutine(Lose());
             } else {
                 m_player.GetHit();
@@ -69,22 +74,34 @@ namespace Golf {
 
         private IEnumerator StartServe()
         {
-            if (m_ball) Destroy(m_ball);
+            if (m_ball && m_ball.TryGetComponent<Rigidbody>(out var rb)) {
+                rb.useGravity = true;
+            }
             yield return new WaitForSeconds(m_delayServe);
+            if (m_ball) Destroy(m_ball);
             m_enemy.Serve(ball => m_ball = ball);
+            m_isPending = false;
         }
 
         private IEnumerator Win()
         {
-            if (m_ball) Destroy(m_ball);
+            if (m_ball && m_ball.TryGetComponent<Rigidbody>(out var rb)) {
+                rb.useGravity = true;
+            }
             StartCoroutine(m_enemy.Die(() => OnWin?.Invoke()));
+            if (m_ball) Destroy(m_ball);
+            m_isPending = false;
             yield break;
         }
 
         private IEnumerator Lose()
         {
-            if (m_ball) Destroy(m_ball);
+            if (m_ball && m_ball.TryGetComponent<Rigidbody>(out var rb)) {
+                rb.useGravity = true;
+            }
             StartCoroutine(m_player.Die(() => OnLose?.Invoke()));
+            if (m_ball) Destroy(m_ball);
+            m_isPending = false;
             yield break;
         }
     }

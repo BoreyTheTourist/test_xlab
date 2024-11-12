@@ -30,7 +30,31 @@ namespace Golf
             if (mode) {
                 mode.ClearOptions();
                 mode.AddOptions(new List<string> { EASYMODE, NORMALMODE, HARDMODE });
-                mode.value = 1;
+                var m = GameInstance.LoadMode();
+                if (m.HasValue) {
+                    switch (m.Value) {
+                        case GameInstance.Mode.Easy:
+                        mode.value = 0;
+                        break;
+                        case GameInstance.Mode.Normal:
+                        mode.value = 1;
+                        break;
+                        case GameInstance.Mode.Hard:
+                        mode.value = 2;
+                        break;
+                    }
+                } else {
+                    GameInstance.ChangeMode(GameInstance.Mode.Normal);
+                    mode.value = 1;
+                }
+            }
+            if (winScoreSlider) {
+                var ws = GameInstance.LoadWinScore();
+                if (ws.HasValue) {
+                    winScoreSlider.value = ws.Value;
+                } else {
+                    GameInstance.ChangeWinScore((byte)winScoreSlider.value);
+                }
             }
             if (audioManager) {
                 if (music) {
@@ -131,7 +155,7 @@ namespace Golf
                     winScoreText.text = score.ToString();
                 }
             }
-            GameInstance.settings.winScore = (byte)score;
+            GameInstance.ChangeWinScore((byte)score);
         }
 
         private void ModeChange(int idx)
@@ -148,9 +172,6 @@ namespace Golf
                 case HARDMODE:
                 GameInstance.ChangeMode(GameInstance.Mode.Hard);
                 break;
-            }
-            if (winScoreSlider) {
-                winScoreSlider.value = GameInstance.settings.winScore;
             }
         }
         private void MusicVolumeChange(float v) {

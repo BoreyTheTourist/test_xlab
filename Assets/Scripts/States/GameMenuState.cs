@@ -10,30 +10,56 @@ namespace Golf
         public GameObject mainMenuUI;
         public GamePlayState playState;
         public GameSettingsState settingsState;
+        public GameInstructionState instructionState;
         public Button playButton;
         public Button quitButton;
         public Button settingsButton;
+        public Button instructionButton;
 
         private void OnEnable()
         {
-            mainMenuUI.SetActive(true);
-            playButton.onClick.AddListener(Play);
-            quitButton.onClick.AddListener(Quit);
-            settingsButton.onClick.AddListener(SettingsEnter);
+            if (mainMenuUI) {
+                mainMenuUI.SetActive(true);
+            }
+            if (playButton) {
+                playButton.onClick.AddListener(Play);
+            }
+            if (quitButton) {
+                quitButton.onClick.AddListener(Quit);
+            }
+            if (settingsButton) {
+                settingsButton.onClick.AddListener(SettingsEnter);
+            }
+            if (instructionButton) {
+                instructionButton.onClick.AddListener(InstructionEnter);
+            }
         }
 
         private void OnDisable()
         {
-            mainMenuUI.SetActive(false);
-            playButton.onClick.RemoveListener(Play);
-            quitButton.onClick.RemoveListener(Quit);
-            settingsButton.onClick.RemoveListener(SettingsEnter);
+            if (mainMenuUI) {
+                mainMenuUI.SetActive(false);
+            }
+            if (playButton) {
+                playButton.onClick.RemoveListener(Play);
+            }
+            if (quitButton) {
+                quitButton.onClick.RemoveListener(Quit);
+            }
+            if (settingsButton) {
+                settingsButton.onClick.RemoveListener(SettingsEnter);
+            }
+            if (instructionButton) {
+                instructionButton.onClick.RemoveListener(InstructionEnter);
+            }
         }
 
         public void Play()
         {
-            playState.gameObject.SetActive(true);
-            gameObject.SetActive(false);
+            if (playState) {
+                playState.gameObject.SetActive(true);
+                gameObject.SetActive(false);
+            }
         }
 
         public void Quit()
@@ -43,8 +69,17 @@ namespace Golf
 
         private void SettingsEnter()
         {
-            settingsState.Enter(gameObject);
-            gameObject.SetActive(false);
+            if (settingsState) {
+                settingsState.Enter(gameObject);
+                gameObject.SetActive(false);
+            }
+        }
+        private void InstructionEnter()
+        {
+            if (instructionState) {
+                instructionState.gameObject.SetActive(true);
+                gameObject.SetActive(false);
+            }
         }
     }
 }

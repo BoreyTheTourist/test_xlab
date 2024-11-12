@@ -5,10 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Golf {
-    public class CanvasController : MonoBehaviour
+    public class CrackController : MonoBehaviour
     {
         [SerializeField] private RectTransform m_canvas;
         [SerializeField] private Sprite m_crack;
+        private List<GameObject> m_cracks = new List<GameObject>();
 
         public void Crack(bool isGiant = false)
         {
@@ -57,7 +58,15 @@ namespace Golf {
             crackImage.GetComponent<RectTransform>().rotation = rot;
             crackImage.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
             crackImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            m_cracks.Add(crack);
             crack.SetActive(true);
+        }
+        public void Clear()
+        {
+            foreach (var cr in m_cracks) {
+                Destroy(cr);
+            }
+            m_cracks.Clear();
         }
     }
 }

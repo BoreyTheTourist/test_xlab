@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,9 +15,11 @@ namespace Golf {
     {
         public EventTrigger leftHitTrigger;
         public EventTrigger rightHitTrigger;
+        public CrackController crackController;
         public StickController stickController;
         public BeatController beatController;
-        public PlayerSFXController m_sfx;
+        public PlayerSFXController sfx;
+        public float loseDelay = 2f;
 
         private EventTrigger.Entry leftHitEntry;
         private EventTrigger.Entry rightHitEntry;
@@ -51,6 +54,9 @@ namespace Golf {
             if (rightHitTrigger) {
                 rightHitTrigger.triggers.Remove(rightHitEntry);
             }
+            if (crackController) {
+                crackController.Clear();
+            }
         }
 
         private void Hit(PointerEventData data, Half half) {
@@ -61,17 +67,39 @@ namespace Golf {
                 var bPos = beatController.Return(half);
                 if (bPos.HasValue) {
                     pos = bPos.Value;
-                    if (m_sfx) {
-                        m_sfx.Hit();
+                    if (sfx) {
+                        sfx.Hit();
                     }
-                } else if (m_sfx) {
-                    m_sfx.Swing();
+                } else if (sfx) {
+                    sfx.Swing();
                 }
             }
             if (stickController) {
                 stickController.Move(pos, half);
                 stickController.Swing();
             }
+        }
+
+        public void GetHit()
+        {
+            if (sfx) {
+                sfx.GetHit();
+            }
+            if (crackController) {
+                crackController.Crack();
+            }
+        }
+
+        public IEnumerator Die(System.Action cb)
+        {
+            if (sfx) {
+                sfx.GetHit();
+            }
+            if (crackController) {
+                crackController.Crack(isGiant: true);
+            }
+            yield return new WaitForSeconds(loseDelay);
+            cb();
         }
     }
 }

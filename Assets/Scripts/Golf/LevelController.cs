@@ -11,9 +11,7 @@ namespace Golf {
     {
         [SerializeField] private EnemyController m_enemy;
         [SerializeField] private PlayerController m_player;
-        [SerializeField] private CanvasController m_canvasController;
         [SerializeField] private float m_delayServe = 2f;
-        [SerializeField] private float m_delayLose = 3f;
         private byte m_playerScore = 0;
         private byte m_enemyScore = 0;
         private GameObject m_ball;
@@ -64,6 +62,7 @@ namespace Golf {
             if (m_enemyScore >= GameInstance.settings.winScore) {
                 StartCoroutine(Lose());
             } else {
+                m_player.GetHit();
                 StartCoroutine(StartServe());
             }
         }
@@ -85,8 +84,8 @@ namespace Golf {
         private IEnumerator Lose()
         {
             if (m_ball) Destroy(m_ball);
-            yield return new WaitForSeconds(m_delayLose);
-            OnLose.Invoke();
+            StartCoroutine(m_player.Die(() => OnLose?.Invoke()));
+            yield break;
         }
     }
 }

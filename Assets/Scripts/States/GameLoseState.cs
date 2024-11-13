@@ -25,6 +25,9 @@ namespace Golf
             if (menuButton) {
                 menuButton.onClick.AddListener(EnterMenu);
             }
+            if (quitButton) {
+                quitButton.onClick.AddListener(Quit);
+            }
         }
 
         private void OnDisable()
@@ -37,6 +40,9 @@ namespace Golf
             }
             if (menuButton) {
                 menuButton.onClick.RemoveListener(EnterMenu);
+            }
+            if (quitButton) {
+                quitButton.onClick.RemoveListener(Quit);
             }
         }
 
